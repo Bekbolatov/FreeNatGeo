@@ -6,29 +6,32 @@
 // @version     1
 // ==/UserScript==
 
-
-var XXSPRK = {};
-XXSPRK.numTries = 0;
-XXSPRK.maxTries = 50;
-XXSPRK.delay = 100;
-XXSPRK.clear = function() {
-  $('img[src*="monet"]').hide();
-  $('div[id*="monet"]').hide();
-  $('body').css('overflow-y', 'scroll');
-  $('body').css('overflow-x', 'scroll');
-};
-XXSPRK.tryClear = function() {
-  if ($('img[src*="monet"]').size() > 0) {
-    XXSPRK.clear();
-	console.log("XXSPRK: clearing");
-  } else {
-    if (XXSPRK.numTries < XXSPRK.maxTries) {
-	  XXSPRK.numTries = XXSPRK.numTries + 1;
-	  console.log("XXSPRK: will try again in " + XXSPRK.delay);
-	  setTimeout(XXSPRK.tryClear, XXSPRK.delay);
-	} else {
-	  console.log("XXSPRK: giving up");
-	}
-  }
+if (XXSPRK === undefined) {
+  var XXSPRK = {};
 }
-XXSPRK.tryClear();
+if (XXSPRK.natgeo === undefined) {
+  XXSPRK.natgeo = {};
+}
+XXSPRK.natgeo.xom = function() {
+  var found = false;
+  var x = document.images;
+  for (i=0; i < x.length; i++) {
+    if (x[i].src.indexOf("monet") > -1) {
+	  x[i].style.visibility = 'hidden';
+	  found = true;
+	}
+  }  
+  x = document.getElementsByTagName('div');
+  for (i=0; i < x.length; i++) {
+    if (x[i].id.indexOf("monet") > -1) {
+	  x[i].style.visibility = 'hidden';
+	}
+  }  
+  if (found) {
+    document.getElementsByTagName('body')[0].style.overflowX = 'scroll';
+    document.getElementsByTagName('body')[0].style.overflowY = 'scroll';
+  }
+  console.log('found? ' + found);
+};
+
+GM_registerMenuCommand("Remove forced registration", XXSPRK.natgeo.xom, "R");
